@@ -1,0 +1,74 @@
+﻿@model IEnumerable<AjaxMvcApp.Models.Product>
+
+@{
+    ViewData["Title"] = "Ürün Listesi";
+}
+
+<h1>ÜRÜN LİSTESİ</h1>
+
+
+<input type="text" id="searchInput" placeholder="Ürün Ara..." class="form-control mb-3" />
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>@Html.DisplayNameFor(model => model.Id)</th>
+            <th>@Html.DisplayNameFor(model => model.Name)</th>
+            <th>@Html.DisplayNameFor(model => model.Description)</th>
+            <th>@Html.DisplayNameFor(model => model.Price)</th>
+            <th>@Html.DisplayNameFor(model => model.StockQuantity)</th>
+            <th>@Html.DisplayNameFor(model => model.CreatedDate)</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody id="productTableBody">
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@Html.DisplayFor(modelItem => item.Id)</td>
+                <td>@Html.DisplayFor(modelItem => item.Name)</td>
+                <td>@Html.DisplayFor(modelItem => item.Description)</td>
+                <td>@Html.DisplayFor(modelItem => item.Price)</td>
+                <td>@Html.DisplayFor(modelItem => item.StockQuantity)</td>
+                <td>@Html.DisplayFor(modelItem => item.CreatedDate)</td>
+
+            </tr>
+        }
+    </tbody>
+</table>
+
+@section Scripts {
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $('#searchInput').on('input', function () {
+            var searchTerm = $(this).val();
+
+            $.ajax({
+                url: '/Product/SearchProducts',
+                type: 'GET',
+                data: { searchTerm: searchTerm },
+                success: function (products) {
+                    var tableBody = $('#productTableBody');
+                    tableBody.empty();
+
+                    products.forEach(function (product) {
+                        tableBody.append(`
+                            <tr>
+                                <td>${product.id}</td>
+                                <td>${product.name}</td>
+                                <td>${product.description}</td>
+                                <td>${product.price}</td>
+                                <td>${product.stockQuantity}</td>
+                                <td>${product.createdDate}</td>
+                     
+                            </tr>
+                        `);
+                    });
+                },
+                error: function (err) {
+                    console.error('Hata oluştu:', err);
+                }
+            });
+        });
+    </script>
+}
